@@ -1,0 +1,54 @@
+{
+  "name": "linkuha/helpers",
+  "type": "library",
+  "description" : "Simple PHP assistance classes",
+  "keywords": [
+    "helpers",
+    "config",
+    "version",
+    "user-agent",
+    "curl",
+    "ip",
+    "retry"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/linkuha/php-helpers",
+  "authors": [
+    {
+      "name" : "Pudich Alexandr",
+      "email" : "linkuha@gmail.com",
+      "homepage" : "https://pudich.ru"
+    }
+  ],
+  "require": {
+    "php" : ">=5.6.0",
+
+    "lib-pcre": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "ext-SPL": "*",
+
+    "phlak/semver": "^1.0"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "SimpleLibs\\": "src"
+    },
+    "files": [
+      "functions/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+  },
+  "suggest": {
+    "ext-intl" : "Allow parsing RFC3987 compliant hosts",
+    "paragonie/random_compat": "PHP 5.* random_int polyfill."
+  },
+  "scripts": {
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
