@@ -1,3 +1,6 @@
+Install:
+`composer require linkuha/helpers:dev-master`
+
 List of components:
 * ArrayHelper - imported from Yii framework, allow to reindex/group arrays values
 * ConfigBase - object for config
