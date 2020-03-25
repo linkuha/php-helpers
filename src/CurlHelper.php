@@ -3,7 +3,6 @@
  * Created by PhpStorm.
  * User: linkuha (Pudich Aleksandr)
  * Date: 13.11.2018
- * Time: 0:16
  */
 
 namespace SimpleLibs;
@@ -48,6 +47,7 @@ class CurlHelper
      *     @option string  "header" [follow location redirects] // TODO like https://www.twilio.com/docs/libraries/php/custom-http-clients-php
      *     @option string  "ssl" [verify SSL]
      *     @option string  "timeout" [default const PARAM_HTTP_TIMEOUT]
+     *     @option string  "connect_timeout"
      *     @option string  "return_transfer" [return response body; default: 1]
      *     @option string  "proxy" [proxy connection params]
      *     @option string  "proxy" => "tunnel" ['CONNECT HTTP' method; make TCP socket with handshake
@@ -103,22 +103,21 @@ class CurlHelper
             }
 
             if (isset($params['timeout'])) {
+                // check if old version of cURL
                 if (defined('CURLOPT_TIMEOUT_MS')) {
-                    $opts[CURLOPT_TIMEOUT_MS] = ceil($params['timeout'] * 1000);
+                    curl_setopt($ch, CURLOPT_TIMEOUT_MS, ceil($params['timeout'] * 1000));
                 } else {
-                    $opts[CURLOPT_TIMEOUT] = ceil($params['timeout']);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, ceil($params['timeout']));
                 }
             } else {
                 curl_setopt($ch, CURLOPT_TIMEOUT, self::PARAM_HTTP_TIMEOUT);
             }
 
-            // The defined()s are here as the *_MS opts are not available on older
-            // cURL versions
             if (isset($params['connect_timeout'])) {
                 if (defined('CURLOPT_CONNECTTIMEOUT_MS')) {
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, ceil($params['connectTimeout'] * 1000));
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, ceil($params['connect_timeout'] * 1000));
                 } else {
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ceil($params['connectTimeout']));
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ceil($params['connect_timeout']));
                 }
             }
 
@@ -139,11 +138,9 @@ class CurlHelper
             }
 
             if (isset($params['headers']) && is_array($params['headers'])) {
-                /*
-                if (self::checkCurlVersion() === 'old') {
+                /* if (self::checkCurlVersion() === 'old') {
                     $header = [];
-                    foreach ($params['sendHeader'] as $k => $v)
-                    {
+                    foreach ($params['sendHeader'] as $k => $v) {
                         $header[] = $k. ': ' . $v . "\r\n";
                     }
                     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
@@ -153,14 +150,10 @@ class CurlHelper
 
             if (isset($params['referer'])) {
                 curl_setopt($ch, CURLOPT_REFERER, $params['referer']);
-//            } else {
-//                curl_setopt($ch, CURLOPT_REFERER, 'https://www.google.com/');
             }
 
-            /**
-             * Basic auth.
-             * example userpwd:
-             *      username:password123
+            /*
+             * Basic auth. example userpwd: 'username:password123'
              */
             if (isset($params['userpwd'])) {
                 curl_setopt($ch, CURLOPT_USERPWD, $params['userpwd']);
@@ -259,7 +252,7 @@ class CurlHelper
         });
         curl_exec($curlHandle);
         $responseCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-        curl_close($curlHandle); // Don't forget to close the connection
+        curl_close($curlHandle);
 
         return intval($responseCode);
     }
